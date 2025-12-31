@@ -18,8 +18,14 @@ app.use(cookieParser());
 app.use(session({
   secret: process.env.SESSION_SECRET || 'vbase_session_secret',
   resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 24 * 60 * 60 * 1000 }
+  saveUninitialized: false,
+  proxy: true,
+  cookie: { 
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true
+  }
 }));
 
 app.set('view engine', 'ejs');
