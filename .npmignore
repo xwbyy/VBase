@@ -1,0 +1,10 @@
+node_modules
+.env
+sheet.json
+attached_assets
+/tmp/logs
+log_mapping.json
+.replit
+.gitignore
+package-lock.json
+*.log
