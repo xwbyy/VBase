@@ -61,9 +61,10 @@ VBase adalah platform database-as-a-service profesional dengan desain modern iOS
   - Best practices
 
 ### Subscription Tiers
-- **Free**: 500 requests/month
-- **Professional**: $9.99/month, 10,000 requests
-- **Enterprise**: $49.99/month, 100,000 requests
+- **Free**: 500 requests/month (Rp 0)
+- **Professional**: Rp 15.000/month, 10.000 requests
+- **VIP 1**: Rp 25.000/month, 20.000 requests
+- **Enterprise**: Rp 40.000/month, 100.000 requests
 
 ## Tech Stack
 - **Backend**: Node.js + Express.js
