@@ -1,0 +1,72 @@
+<%- include('header') %>
+
+<script>
+    document.getElementById('pageTitle').textContent = 'Admin Control';
+    document.getElementById('pageSubtitle').textContent = 'Manage users and configuration';
+</script>
+
+<main>
+    <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+    </div>
+
+    <div class="profile-section">
+        <h2>User Management</h2>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr style="text-align: left; border-bottom: 1px solid var(--border-color);">
+                        <th style="padding: 1rem;">Name</th>
+                        <th style="padding: 1rem;">Email</th>
+                        <th style="padding: 1rem;">Plan</th>
+                        <th style="padding: 1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% allUsers.forEach(u => { %>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1rem;"><%= u.name %></td>
+                            <td style="padding: 1rem;"><%= u.email %></td>
+                            <td style="padding: 1rem;">
+                                <span class="plan-badge"><%= u.plan.toUpperCase() %></span>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <select onchange="updatePlan('<%= u.email %>', this.value)" style="padding: 0.5rem; border-radius: 4px; background: var(--bg-tertiary); color: white;">
+                                    <option value="free" <%= u.plan === 'free' ? 'selected' : '' %>>Free</option>
+                                    <option value="vip1" <%= u.plan === 'vip1' ? 'selected' : '' %>>VIP 1</option>
+                                    <option value="vip2" <%= u.plan === 'vip2' ? 'selected' : '' %>>VIP 2</option>
+                                    <option value="enterprise" <%= u.plan === 'enterprise' ? 'selected' : '' %>>Enterprise</option>
+                                </select>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+async function updatePlan(email, plan) {
+    showLoading(true);
+    try {
+        const res = await fetch('/api/admin/update-plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, plan })
+        });
+        if (res.ok) {
+            showToast('Plan updated for ' + email, 'success');
+        } else {
+            const data = await res.json();
+            showToast(data.error || 'Failed to update plan', 'error');
+        }
+    } catch (err) {
+        showToast('Network error', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+</script>
+
+<%- include('footer') %>

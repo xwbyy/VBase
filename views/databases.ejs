@@ -1,0 +1,136 @@
+<%- include('header') %>
+
+<script>
+    document.getElementById('pageTitle').textContent = 'Databases';
+    document.getElementById('pageSubtitle').textContent = 'Manage your data';
+</script>
+
+<main class="databases-container">
+    <div class="page-header">
+        <h1>Your Databases</h1>
+        <button class="btn-primary" onclick="showCreateModal()">Create Database</button>
+    </div>
+
+    <div id="createModal" class="modal hidden">
+        <div class="modal-content">
+            <button class="close" onclick="closeCreateModal()">×</button>
+            <h2>Create New Database</h2>
+            <form id="createDbForm" style="margin-top: 1.5rem;">
+                <div class="form-group">
+                    <label>Database Name</label>
+                    <input type="text" id="dbName" placeholder="My Database" required>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="dbType">
+                        <option>JSON</option>
+                        <option>TEXT</option>
+                        <option>CSV</option>
+                        <option>TABLE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="dbDesc" placeholder="What is this database for?" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Create</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="databasesList" class="databases-grid" style="margin-top: 2rem;">
+        <p class="empty-state">Loading your databases...</p>
+    </div>
+</main>
+
+<script>
+async function loadDatabases() {
+    try {
+        const res = await fetch('/api/databases');
+        const data = await res.json();
+        const list = document.getElementById('databasesList');
+        
+        if (data.databases.length === 0) {
+            list.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">No databases yet. Create your first database to get started.</div>';
+            return;
+        }
+
+        list.innerHTML = data.databases.map(db => `
+            <div class="db-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                    <h3 style="margin: 0;">${db.name}</h3>
+                    <span class="db-type">${db.type}</span>
+                </div>
+                <div class="api-key" style="margin: 0.5rem 0; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <code style="font-size: 0.85rem; color: var(--primary); font-family: 'Menlo', monospace; font-weight: 600;">${db.id}</code>
+                    <button class="btn-small" onclick="copyToClipboard('${db.id}')" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; background: var(--primary); color: white; border: none;">Copy ID</button>
+                </div>
+                <p class="db-desc" style="margin-top: 1rem;">${db.description || 'No description'}</p>
+                <div style="margin: 1rem 0; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-tertiary);">
+                    <span>📊 Records: <b>${db.records.length}</b></span>
+                    <span>•</span>
+                    <span>📅 Created: ${new Date(db.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div class="db-actions">
+                    <button class="btn-small" style="flex: 1;" onclick="viewDatabase('${db.id}')">Explore</button>
+                    <button class="btn-small btn-danger-outline" style="flex: 0 0 auto;" onclick="deleteDatabase('${db.id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+document.getElementById('createDbForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showLoading(true);
+    try {
+        const res = await fetch('/api/databases/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: document.getElementById('dbName').value,
+                type: document.getElementById('dbType').value,
+                description: document.getElementById('dbDesc').value
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Database created successfully!', 'success');
+            closeCreateModal();
+            loadDatabases();
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+    } finally {
+        showLoading(false);
+    }
+});
+
+function showCreateModal() {
+    document.getElementById('createModal').classList.remove('hidden');
+}
+
+function closeCreateModal() {
+    document.getElementById('createModal').classList.add('hidden');
+    document.getElementById('createDbForm').reset();
+}
+
+function viewDatabase(dbId) {
+    showToast('Database view coming soon. ID: ' + dbId, 'info', 'Coming Soon');
+}
+
+async function deleteDatabase(dbId) {
+    const confirmed = await window.confirmDialog('Delete this database permanently?', 'Confirm Delete');
+    if (confirmed) {
+        showToast('Delete functionality coming soon', 'info', 'Coming Soon');
+    }
+}
+
+loadDatabases();
+</script>
+
+<%- include('footer') %>

@@ -1,0 +1,203 @@
+<%- include('header') %>
+
+    <script>
+        document.getElementById('pageTitle').textContent = 'Documentation';
+        document.getElementById('pageSubtitle').textContent = 'Modern API reference and guides';
+
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = 'var(--success)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        function showTab(lang) {
+            document.querySelectorAll('.code-window').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(lang + '-code').style.display = 'block';
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+
+    <style>
+        .tab-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        .code-window {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+
+    <main style="max-width: 1000px; margin: 0 auto; padding-bottom: 5rem;">
+        <div style="margin-bottom: 4rem; text-align: center;">
+            <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Developer Docs</h1>
+            <p style="font-size: 1.1rem; color: var(--text-secondary);">Everything you need to build with VBase.</p>
+        </div>
+
+        <section class="glass-card" style="margin-bottom: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem;" data-t="quickTemplates">Integration Use Cases</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;" data-t="templateDesc">Use VBase as your backend for common application features.</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <!-- Auth Blueprint -->
+                <div style="background: rgba(15, 23, 42, 0.4); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <span style="font-size: 1.25rem;">🔐</span>
+                        <h3 style="color: var(--primary); font-size: 1rem; margin: 0;">User Auth System</h3>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">Perfect for storing user profiles and login data.</p>
+                    <div style="background: #0f172a; padding: 1rem; border-radius: 8px; font-size: 0.75rem;">
+                        <pre style="margin: 0; color: #10b981;">{
+  "email": "user@vbase.zone.id",
+  "hash": "$2b$12$...",
+  "role": "member",
+  "verified": false
+}</pre>
+                    </div>
+                </div>
+
+                <!-- Inventory Blueprint -->
+                <div style="background: rgba(15, 23, 42, 0.4); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <span style="font-size: 1.25rem;">📦</span>
+                        <h3 style="color: var(--secondary); font-size: 1rem; margin: 0;">Product Catalog</h3>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">Manage your store inventory and pricing.</p>
+                    <div style="background: #0f172a; padding: 1rem; border-radius: 8px; font-size: 0.75rem;">
+                        <pre style="margin: 0; color: #8b5cf6;">{
+  "sku": "ITEM-001",
+  "price": 45000,
+  "stock": 150,
+  "category": "Gadgets"
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="glass-card" style="margin-bottom: 3rem;">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem;">Quick Start Templates</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Choose your preferred language to see integration examples.</p>
+            
+            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <button class="tab-btn active" onclick="showTab('node')">Node.js</button>
+                <button class="tab-btn" onclick="showTab('python')">Python</button>
+                <button class="tab-btn" onclick="showTab('curl')">cURL</button>
+            </div>
+
+            <div id="node-code" class="code-window">
+                <div style="background: #0f172a; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 0.75rem 1.25rem; font-size: 0.75rem; color: var(--text-tertiary); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span>javascript</span>
+                        <button onclick="copyToClipboard(`const axios = require('axios');\n\nasync function vbase() {\n  const res = await axios.post('https://vbase.zone.id/api/db/DB_ID/insert', {\n    data: { name: 'Vynaa', role: 'Dev' }\n  }, {\n    headers: { 'X-API-Key': 'YOUR_KEY' }\n  });\n  console.log(res.data);\n}`, this)" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:700;">Copy</button>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <pre style="margin: 0; color: #cbd5e1; font-family: 'Fira Code', 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.7;">
+const axios = require('axios');
+
+async function vbase() {
+  const res = await axios.post('https://vbase.zone.id/api/db/DB_ID/insert', {
+    data: { name: 'Vynaa', role: 'Dev' }
+  }, {
+    headers: { 'X-API-Key': 'YOUR_KEY' }
+  });
+  console.log(res.data);
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div id="python-code" class="code-window" style="display: none;">
+                <div style="background: #0f172a; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 0.75rem 1.25rem; font-size: 0.75rem; color: var(--text-tertiary); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span>python</span>
+                        <button onclick="copyToClipboard(`import requests\n\ndef insert_data():\n    url = 'https://vbase.zone.id/api/db/DB_ID/insert'\n    headers = {'X-API-Key': 'YOUR_KEY'}\n    data = {'name': 'Vynaa', 'role': 'Dev'}\n    \n    response = requests.post(url, json=data, headers=headers)\n    print(response.json())`, this)" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:700;">Copy</button>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <pre style="margin: 0; color: #cbd5e1; font-family: 'Fira Code', 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.7;">
+import requests
+
+def insert_data():
+    url = 'https://vbase.zone.id/api/db/DB_ID/insert'
+    headers = {'X-API-Key': 'YOUR_KEY'}
+    data = {'name': 'Vynaa', 'role': 'Dev'}
+    
+    response = requests.post(url, json=data, headers=headers)
+    print(response.json())</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div id="curl-code" class="code-window" style="display: none;">
+                <div style="background: #0f172a; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden;">
+                    <div style="background: rgba(255,255,255,0.05); padding: 0.75rem 1.25rem; font-size: 0.75rem; color: var(--text-tertiary); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span>bash</span>
+                        <button onclick="copyToClipboard(`curl -X POST https://vbase.zone.id/api/db/DB_ID/insert \\\n  -H \"X-API-Key: YOUR_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\": \"Vynaa\"}'`, this)" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:700;">Copy</button>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <pre style="margin: 0; color: #cbd5e1; font-family: 'Fira Code', 'JetBrains Mono', monospace; font-size: 0.85rem; line-height: 1.7;">
+curl -X POST https://vbase.zone.id/api/db/DB_ID/insert \
+  -H "X-API-Key: YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Vynaa"}'</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="glass-card" style="margin-bottom: 3rem;">
+            <h2 style="margin-bottom: 1rem;">Response Format</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">VBase returns a standard JSON envelope for all successful operations.</p>
+            <div style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 12px; padding: 1.5rem;">
+                <pre style="margin: 0; color: #10b981; font-family: 'Fira Code', monospace; font-size: 0.85rem; line-height: 1.6;">
+{
+  "success": true,
+  "record": {
+    "id": "rec_7x9w2m",
+    "name": "Vynaa",
+    "timestamp": "2025-12-31T12:00:00.000Z"
+  }
+}</pre>
+            </div>
+        </section>
+
+        <section class="glass-card">
+            <h2 style="margin-bottom: 1.5rem;">Error Handling</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">In case of failure, the API returns a relevant HTTP status code and an error message.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+                <div style="padding: 1.25rem; background: rgba(239, 68, 68, 0.03); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.1);">
+                    <div style="font-weight: 800; color: #ef4444; font-size: 1.1rem; margin-bottom: 0.25rem;">401</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Unauthorized. Invalid API Key.</div>
+                </div>
+                <div style="padding: 1.25rem; background: rgba(245, 158, 11, 0.03); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.1);">
+                    <div style="font-weight: 800; color: #f59e0b; font-size: 1.1rem; margin-bottom: 0.25rem;">404</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Not Found. Check your DB ID.</div>
+                </div>
+                <div style="padding: 1.25rem; background: rgba(99, 102, 241, 0.03); border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.1);">
+                    <div style="font-weight: 800; color: #6366f1; font-size: 1.1rem; margin-bottom: 0.25rem;">429</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Rate Limit Exceeded.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('footer') %>

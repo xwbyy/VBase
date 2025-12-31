@@ -1,0 +1,69 @@
+<%- include('header') %>
+
+<script>
+    document.getElementById('pageTitle').textContent = t('login');
+    document.getElementById('pageSubtitle').textContent = currentLang === 'id' ? 'Akses akun VBase Anda' : 'Access your VBase account';
+</script>
+
+<main class="auth-container">
+    <div class="auth-box">
+        <h1 id="loginWelcome"></h1>
+        <p class="subtitle" id="loginSubtitle"></p>
+        <form id="loginForm" class="auth-form">
+            <div class="form-group">
+                <label id="emailLabel">Email Address</label>
+                <input type="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label id="passwordLabel">Password</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn-primary btn-full" id="signInBtn">Sign In</button>
+        </form>
+        <p class="auth-link"><span id="newUserText">New to VBase?</span> <a href="/register" id="createLink">Create an account</a></p>
+    </div>
+</main>
+
+<script>
+function updateLoginText() {
+    document.getElementById('loginWelcome').textContent = currentLang === 'id' ? 'Selamat Datang Kembali' : 'Welcome Back';
+    document.getElementById('loginSubtitle').textContent = currentLang === 'id' ? 'Masuk ke akun VBase Anda' : 'Sign in to your VBase account';
+    document.getElementById('emailLabel').textContent = currentLang === 'id' ? 'Alamat Email' : 'Email Address';
+    document.getElementById('passwordLabel').textContent = currentLang === 'id' ? 'Password' : 'Password';
+    document.getElementById('signInBtn').textContent = currentLang === 'id' ? 'Masuk' : 'Sign In';
+    document.getElementById('newUserText').textContent = currentLang === 'id' ? 'Pengguna baru di VBase?' : 'New to VBase?';
+    document.getElementById('createLink').textContent = currentLang === 'id' ? 'Buat akun' : 'Create an account';
+}
+
+updateLoginText();
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    
+    showLoading(true);
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast(currentLang === 'id' ? 'Login berhasil!' : 'Login successful!', 'success');
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 500);
+        } else {
+            showToast(data.error, 'error', 'Login Failed');
+            showLoading(false);
+        }
+    } catch (err) {
+        showToast('Network error occurred: ' + err.message, 'error');
+        showLoading(false);
+    }
+});
+</script>
+
+<%- include('footer') %>

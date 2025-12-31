@@ -1,0 +1,75 @@
+<%- include('header') %>
+
+<script>
+    document.getElementById('pageTitle').textContent = currentLang === 'id' ? 'Buat Akun' : 'Create Account';
+    document.getElementById('pageSubtitle').textContent = currentLang === 'id' ? 'Bergabunglah dengan ribuan pengembang' : 'Join thousands of developers';
+</script>
+
+<main class="auth-container">
+    <div class="auth-box">
+        <h1 id="regTitle">Create Account</h1>
+        <p class="subtitle" id="regSubtitle">Join VBase and start building</p>
+        <form id="registerForm" class="auth-form">
+            <div class="form-group">
+                <label id="nameLabel">Full Name</label>
+                <input type="text" name="name" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+                <label id="emailLabel">Email Address</label>
+                <input type="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+                <label id="passwordLabel">Password</label>
+                <input type="password" name="password" placeholder="Create a strong password" required>
+            </div>
+            <button type="submit" class="btn-primary btn-full" id="createBtn">Create Account</button>
+        </form>
+        <p class="auth-link"><span id="haveAccount">Already have an account?</span> <a href="/login" id="signInLink">Sign in</a></p>
+    </div>
+</main>
+
+<script>
+function updateRegisterText() {
+    document.getElementById('regTitle').textContent = currentLang === 'id' ? 'Buat Akun' : 'Create Account';
+    document.getElementById('regSubtitle').textContent = currentLang === 'id' ? 'Bergabunglah dengan VBase dan mulai membangun' : 'Join VBase and start building';
+    document.getElementById('nameLabel').textContent = currentLang === 'id' ? 'Nama Lengkap' : 'Full Name';
+    document.getElementById('emailLabel').textContent = currentLang === 'id' ? 'Alamat Email' : 'Email Address';
+    document.getElementById('passwordLabel').textContent = currentLang === 'id' ? 'Password' : 'Password';
+    document.getElementById('createBtn').textContent = currentLang === 'id' ? 'Buat Akun' : 'Create Account';
+    document.getElementById('haveAccount').textContent = currentLang === 'id' ? 'Sudah punya akun?' : 'Already have an account?';
+    document.getElementById('signInLink').textContent = currentLang === 'id' ? 'Masuk' : 'Sign in';
+}
+
+updateRegisterText();
+
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    
+    showLoading(true);
+    try {
+        const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Registration successful!', 'success');
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 500);
+        } else {
+            showToast(data.error, 'error', 'Registration Failed');
+            showLoading(false);
+        }
+    } catch (err) {
+        showToast('Network error occurred', 'error');
+        showLoading(false);
+    }
+});
+</script>
+
+<%- include('footer') %>

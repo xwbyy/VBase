@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- SEO Meta Tags -->
+    <title>VBase - Professional Database-as-a-Service</title>
+    <meta name="description" content="VBase is a professional database-as-a-service platform with iOS-style design. Manage your data through a powerful REST API with ease.">
+    <meta name="keywords" content="database, dbaas, rest api, json storage, developer tools, vbase">
+    <meta name="author" content="Vynaa">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vbase.zone.id/">
+    <meta property="og:title" content="VBase - Professional Database-as-a-Service">
+    <meta property="og:description" content="Manage your data through a powerful REST API with a premium iOS-style experience.">
+    <meta property="og:image" content="https://vbase.zone.id/image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://vbase.zone.id/">
+    <meta property="twitter:title" content="VBase - Professional Database-as-a-Service">
+    <meta property="twitter:description" content="Manage your data through a powerful REST API with a premium iOS-style experience.">
+    <meta property="twitter:image" content="https://vbase.zone.id/image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://vbase.zone.id/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="https://vbase.zone.id/favicon.png">
+    <link rel="apple-touch-icon" href="https://vbase.zone.id/favicon.png">
+
+    <link rel="stylesheet" href="/css/style.css?v=1.0.3">
+    <script>
+        let currentLang = localStorage.getItem('lang') || 'en';
+    </script>
+    <script src="/js/app.js?v=1.0.3"></script>
+</head>
+<body>
+    <div class="sidebar-overlay"></div>
+    
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">V</div>
+            <div class="sidebar-logo-text">VBase</div>
+            <button class="sidebar-close-btn" onclick="closeSidebar()" title="Close">✕</button>
+        </div>
+
+        <% if (typeof user !== 'undefined' && user) { %>
+            <nav class="sidebar-nav">
+                <div class="sidebar-nav-label" data-t="main">Main</div>
+                <li class="sidebar-nav-item">
+                    <a href="/dashboard" class="sidebar-nav-link <%= typeof page !== 'undefined' && page === 'dashboard' ? 'active' : '' %>" data-t="dashboard">Dashboard</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/databases" class="sidebar-nav-link <%= typeof page !== 'undefined' && page === 'databases' ? 'active' : '' %>" data-t="databases">Databases</a>
+                </li>
+                
+                <div class="sidebar-nav-label" data-t="developer">Developer</div>
+                <li class="sidebar-nav-item">
+                    <a href="/tools" class="sidebar-nav-link <%= typeof page !== 'undefined' && page === 'tools' ? 'active' : '' %>" data-t="apiTools">API Tools</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/docs" class="sidebar-nav-link <%= typeof page !== 'undefined' && page === 'docs' ? 'active' : '' %>" data-t="documentation">Documentation</a>
+                </li>
+
+                <% if (user.role === 'admin') { %>
+                <div class="sidebar-nav-label">Admin</div>
+                <li class="sidebar-nav-item">
+                    <a href="/admin" class="sidebar-nav-link">Dbadmin</a>
+                </li>
+                <% } %>
+
+                <div class="sidebar-nav-label" data-t="account">Account</div>
+                <li class="sidebar-nav-item">
+                    <a href="/profile" class="sidebar-nav-link" data-t="settings">Settings</a>
+                </li>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+                    <div class="sidebar-user-info">
+                        <h3><%= user.name %></h3>
+                        <p><%= user.plan.toUpperCase() %></p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="btn-logout" data-t="logout">Logout</button>
+            </div>
+        <% } else { %>
+            <nav class="sidebar-nav">
+                <div class="sidebar-nav-label">Auth</div>
+                <li class="sidebar-nav-item">
+                    <a href="/login" class="sidebar-nav-link" data-t="login">Login</a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="/register" class="sidebar-nav-link" data-t="register">Register</a>
+                </li>
+            </nav>
+        <% } %>
+    </aside>
+
+    <div class="main-container">
+        <nav class="navbar">
+            <div class="navbar-left">
+                <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+                <div class="navbar-title">
+                    <h1 id="pageTitle">VBase</h1>
+                    <p id="pageSubtitle"></p>
+                </div>
+            </div>
+            <div class="navbar-actions">
+                <button class="lang-toggle" onclick="toggleLanguage()" title="Toggle Language">
+                    <span id="langIndicator">EN</span>
+                </button>
+            </div>
+        </nav>
+
+        <script>
+            document.getElementById('langIndicator').textContent = currentLang.toUpperCase();
+        </script>

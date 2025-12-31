@@ -1,0 +1,110 @@
+<%- include('header') %>
+
+<script>
+    document.getElementById('pageTitle').textContent = 'Settings';
+    document.getElementById('pageSubtitle').textContent = 'Manage your account';
+</script>
+
+<main class="profile-container">
+    <div class="profile-grid">
+        <section class="profile-section">
+            <h2>Account Information</h2>
+            <div class="info-group">
+                <label>Full Name</label>
+                <p><%= user.name %></p>
+            </div>
+            <div class="info-group">
+                <label>Email Address</label>
+                <p><%= user.email %></p>
+            </div>
+            <div class="info-group">
+                <label>User ID</label>
+                <p><%= user.id %></p>
+            </div>
+            <div class="info-group">
+                <label>Member Since</label>
+                <p><%= new Date(user.createdAt).toLocaleDateString() %></p>
+            </div>
+        </section>
+
+        <section class="profile-section">
+            <h2>API Security</h2>
+            <div class="info-group">
+                <label>API Key</label>
+                <div class="api-key-display">
+                    <span id="apiKeyDisplay" class="masked"><%= user.apiKey.substring(0, 10) %>...</span>
+                    <button class="btn-small" onclick="toggleApiKey()" style="flex-shrink: 0;">Show</button>
+                </div>
+            </div>
+            <button class="btn-danger">Reset API Key</button>
+        </section>
+
+        <section class="profile-section">
+            <h2>Subscription</h2>
+            <div class="info-group">
+                <label>Current Plan</label>
+                <p><span class="plan-badge"><%= user.plan.toUpperCase() %></span></p>
+            </div>
+            <div class="info-group">
+                <label>Monthly Limit</label>
+                <p><%= user.limits[user.plan].toLocaleString() %> requests/month</p>
+            </div>
+            <div class="info-group">
+                <label>Used This Month</label>
+                <p><%= user.requests %> requests</p>
+            </div>
+            <button class="btn-primary">Upgrade Plan</button>
+        </section>
+
+        <section class="profile-section">
+            <h2>Preferences</h2>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" checked> Receive email notifications
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" checked> API activity alerts
+                </label>
+            </div>
+            <button class="btn-primary">Save Preferences</button>
+        </section>
+    </div>
+
+    <section class="danger-zone">
+        <h2>Danger Zone</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">These actions cannot be undone</p>
+        <button class="btn-danger" onclick="resetApiKey()">Reset API Key</button>
+        <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
+    </section>
+</main>
+
+<script>
+let apiKeyVisible = false;
+
+function toggleApiKey() {
+    const display = document.getElementById('apiKeyDisplay');
+    if (apiKeyVisible) {
+        display.textContent = '<%= user.apiKey.substring(0, 10) %>...';
+        apiKeyVisible = false;
+    } else {
+        display.textContent = '<%= user.apiKey %>';
+        apiKeyVisible = true;
+    }
+}
+
+function resetApiKey() {
+    if (confirm('This will invalidate your current API key. Continue?')) {
+        alert('API key reset functionality coming soon');
+    }
+}
+
+function deleteAccount() {
+    if (confirm('Are you sure? This action cannot be undone!')) {
+        alert('Account deletion coming soon');
+    }
+}
+</script>
+
+<%- include('footer') %>

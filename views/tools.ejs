@@ -1,0 +1,174 @@
+<%- include('header') %>
+
+<script>
+    document.getElementById('pageTitle').textContent = 'API Tools';
+    document.getElementById('pageSubtitle').textContent = 'Build and test your requests';
+</script>
+
+<main class="tools-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <div style="margin-bottom: 3rem; text-align: center;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" data-t="playgroundTitle">API Playground</h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;" data-t="playgroundDesc">Build, test, and master your database integration.</p>
+    </div>
+
+    <div class="tools-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+        <!-- Left: Builder -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <section class="glass-card">
+                <h2 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-size: 1.25rem;">🛠️</span> Request Builder
+                </h2>
+                
+                <div class="form-group">
+                    <label>Action & Endpoint</label>
+                    <select id="queryEndpoint" style="width: 100%;">
+                        <option value="/api/db/:dbId/insert">INSERT - Create new record</option>
+                        <option value="/api/db/:dbId/select">SELECT - Get all records</option>
+                        <option value="/api/db/:dbId/update/:recordId">UPDATE - Modify existing</option>
+                        <option value="/api/db/:dbId/delete/:recordId">DELETE - Remove record</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Database ID</label>
+                        <input type="text" id="queryDbId" placeholder="db_xxxxx" style="width: 100%;">
+                    </div>
+                    <div class="form-group">
+                        <label>Record ID</label>
+                        <input type="text" id="queryRecordId" placeholder="Required for Update/Delete" style="width: 100%;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="margin-bottom: 0;">Request Body (JSON)</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn-small" onclick="fillTemplate('userReg')" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">User Registration</button>
+                            <button class="btn-small" onclick="fillTemplate('product')" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">Product Catalog</button>
+                            <button class="btn-small" onclick="fillTemplate('analytics')" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">Analytics Log</button>
+                        </div>
+                    </div>
+                    <textarea id="queryBody" placeholder='{"key": "value"}' rows="8" style="width: 100%; font-family: monospace;"></textarea>
+                </div>
+
+                <button id="sendQueryBtn" class="btn-primary btn-full" style="height: 50px; font-size: 1rem;">Execute API Request</button>
+            </section>
+        </div>
+
+        <!-- Right: Result & Real-world Usage -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <section class="glass-card" style="min-height: 200px; display: flex; flex-direction: column;">
+                <h2 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-size: 1.25rem;">📡</span> Server Response
+                </h2>
+                <div id="queryResult" style="flex: 1; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 1.25rem; font-family: 'Fira Code', monospace; font-size: 0.85rem; border: 1px solid var(--border-color); white-space: pre-wrap; color: var(--text-secondary);">
+                    Run a request to see the response here...
+                </div>
+            </section>
+
+            <section class="glass-card">
+                <h2 style="margin-bottom: 1rem;">Real-world Use Cases</h2>
+                <p style="color: var(--text-tertiary); font-size: 0.85rem; margin-bottom: 1.5rem;">VBase is perfect for storing various types of application data:</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                        <strong style="color: var(--primary); font-size: 0.9rem;">Authentication Data</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: 0.25rem;">Store user credentials, roles, and last login timestamps securely.</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                        <strong style="color: var(--secondary); font-size: 0.9rem;">Dynamic Configs</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: 0.25rem;">Update feature flags or app settings remotely without redeploying code.</p>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                        <strong style="color: var(--success); font-size: 0.9rem;">Analytics & Logs</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: 0.25rem;">Track user activity, error reports, or system events in real-time.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+    async function runApiRequest(url, method, apiKey, body) {
+        const resultDiv = document.getElementById('queryResult'); // default for builder
+        const btn = method === 'GET' ? document.getElementById('sendTestBtn') : document.getElementById('sendQueryBtn');
+        
+        try {
+            const options = {
+                method: method,
+                headers: {
+                    'X-API-Key': apiKey,
+                    'Content-Type': 'application/json'
+                }
+            };
+            if (method !== 'GET' && body) {
+                options.body = body;
+            }
+
+            const res = await fetch(url, options);
+            const data = await res.json();
+            return { status: res.status, data };
+        } catch (err) {
+            return { status: 500, data: { error: err.message } };
+        }
+    }
+
+    document.getElementById('sendQueryBtn').addEventListener('click', async () => {
+        const endpoint = document.getElementById('queryEndpoint').value;
+        const dbId = document.getElementById('queryDbId').value;
+        const recordId = document.getElementById('queryRecordId').value;
+        const bodyStr = document.getElementById('queryBody').value;
+        const resultDiv = document.getElementById('queryResult');
+        
+        if (!dbId) return showToast('Database ID is required', 'warning');
+        
+        showLoading(true);
+        let url = endpoint.replace(':dbId', dbId).replace(':recordId', recordId);
+        const method = endpoint.includes('insert') || endpoint.includes('update') ? 'POST' : (endpoint.includes('delete') ? 'DELETE' : 'GET');
+        
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = 'Loading...';
+        
+        try {
+            const { status, data } = await runApiRequest(url, method, '<%= user.apiKey %>', bodyStr);
+            resultDiv.innerHTML = `<div style="color: ${status < 400 ? 'var(--success)' : 'var(--danger)'}; margin-bottom: 0.5rem;">Status: ${status}</div>` + 
+                                 JSON.stringify(data, null, 2);
+            if (status < 400) showToast('Request successful', 'success');
+            else showToast(data.error || 'Request failed', 'error');
+        } catch (err) {
+            showToast('Request failed', 'error');
+        } finally {
+            showLoading(false);
+        }
+    });
+
+    document.getElementById('sendTestBtn').addEventListener('click', async () => {
+        const url = document.getElementById('testerUrl').value;
+        const apiKey = document.getElementById('testerApiKey').value;
+        const method = document.getElementById('testerMethod').value;
+        const bodyStr = document.getElementById('testerBody').value;
+        const resultDiv = document.getElementById('testResult');
+        
+        if (!url) return showToast('URL is required', 'warning');
+        
+        showLoading(true);
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = 'Loading...';
+        
+        try {
+            const { status, data } = await runApiRequest(url, method, apiKey, bodyStr);
+            resultDiv.innerHTML = `<div style="color: ${status < 400 ? 'var(--success)' : 'var(--danger)'}; margin-bottom: 0.5rem;">Status: ${status}</div>` + 
+                                 JSON.stringify(data, null, 2);
+            if (status < 400) showToast('Test successful', 'success');
+            else showToast(data.error || 'Test failed', 'error');
+        } catch (err) {
+            showToast('Test failed', 'error');
+        } finally {
+            showLoading(false);
+        }
+    });
+    </script>
+</main>
+
+<%- include('footer') %>
