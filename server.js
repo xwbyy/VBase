@@ -47,10 +47,24 @@ let databases = {};
 let apiKeys = {};
 
 // Auth middleware
-const requireAuth = (req, res, next) => {
-  if (req.session.userId) {
+const requireAuth = async (req, res, next) => {
+  if (!req.session.userId || !req.session.email) {
+    return res.redirect('/login');
+  }
+
+  // Handle Vercel Cold Starts: If users memory is wiped but session exists
+  if (Object.keys(users).length === 0 || !users[req.session.email]) {
+    try {
+      await syncWithSheets();
+    } catch (e) {
+      console.error('Auth sync failed:', e);
+    }
+  }
+
+  if (users[req.session.email]) {
     next();
   } else {
+    req.session.destroy();
     res.redirect('/login');
   }
 };
