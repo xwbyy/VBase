@@ -17,15 +17,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'vbase_session_secret',
+  name: 'vbase_session', // Custom name to avoid collision and proxy issues
+  secret: process.env.SESSION_SECRET || 'vbase_session_secret_v2',
   resave: true,
   saveUninitialized: true,
+  rolling: true, // Force session cookie to be set on every response
   proxy: true,
   cookie: { 
     maxAge: 24 * 60 * 60 * 1000,
     secure: true,
-    sameSite: 'lax',
-    httpOnly: true
+    sameSite: 'none', // Allow across instances
+    httpOnly: true,
+    path: '/'
   }
 }));
 
